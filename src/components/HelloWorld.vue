@@ -4,6 +4,7 @@ import { ref } from 'vue'
 defineProps<{ msg: string }>()
 
 const count = ref(0)
+const clicked = 'clicked'
 </script>
 
 <template>
@@ -13,7 +14,7 @@ const count = ref(0)
 
     <div class="card">
         <button type="button" @click="count++">
-            count is {{ count }}
+            count is {{ count }} {{ clicked }}
         </button>
     </div>
 </template>
