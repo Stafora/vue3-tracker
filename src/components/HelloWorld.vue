@@ -8,7 +8,7 @@ const clicked = 'clicked'
 </script>
 
 <template>
-    <h1>
+    <h1 class="text-3xl font-bold underline">
         {{ msg }}
     </h1>
 
