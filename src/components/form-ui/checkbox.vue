@@ -1,24 +1,32 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue'
 
-    const props = defineProps<{
-        name?: string,
-        value: string | number,
-        label: string,
-        modelValue: {
-            type: [String, Number, Boolean],
-            required: true,
-        },
-    }>()
+const props = defineProps<{
+    name?: string,
+    value: string | number,
+    label: string,
+    modelValue: {
+    type: [String, Number, Boolean],
+    required: true
+}
+}>()
 
-    const model = defineModel({ required: true })
-    const isChecked = ref(false);
+const model = defineModel({ required: true })
+const isChecked = ref(false);
 
-    watch(() => props.modelValue, (newVal) => {
-        if(Array.isArray(newVal)){
-            isChecked.value = newVal.includes(props.value) ? true : false
-        }
-    });
+const updateChecked = (arr) => {
+    if(Array.isArray(arr)){
+        isChecked.value = arr.includes(props.value) ? true : false
+    }
+}
+
+onMounted(() => {
+    updateChecked(props.modelValue)
+})
+
+watch(() => props.modelValue, (newVal) => {
+    updateChecked(newVal)
+});
 </script>
 
 <template>
