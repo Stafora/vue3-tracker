@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import Aside from '@/components/aside/Aside.vue'
-import Main from '@/components/main/Main.vue'
+import Filter from '@/components/filter/Filter.vue'
+import TaskList from '@/components/task/TaskList.vue'
+import { container as WidgetContainerModal } from "jenesius-vue-modal";
 </script>
 
 <template>
-    <Aside />
-    <Main />
+    <Filter />
+    <TaskList />
+
+    <WidgetContainerModal />
 </template>
