@@ -1,9 +1,9 @@
 export const dateFilter = (value): string => {
     if (!value) return '';
     const date = new Date(value);
-    return date.toLocaleDateString('ru-RU', {
+    return date.toLocaleDateString('EN', {
         day: 'numeric',
-        month: 'long',
+        month: 'numeric',
         year: 'numeric'
     });
 };
