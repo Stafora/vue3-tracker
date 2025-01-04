@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { openModal } from 'jenesius-vue-modal'
-import { dateFilter } from '@/utils/dateFilter'
 import { computed } from 'vue'
+
+import { dateFilter } from '@/utils/filters'
 import { TaskCardType } from '@/types/TaskTypes'
 import SvgIcon from '@/components/SvgIcon.vue'
 import ModalEdit from '@/components/task/ModalEdit.vue'
@@ -20,7 +21,7 @@ const handleOpenModal = () => {
 
 <template>
     <div class="bg-slate-800 text-white p-4 relative">
-        <div class="absolute right-4 top-4" @click="handleOpenModal">
+        <div class="absolute right-4 top-4 cursor-pointer" @click="handleOpenModal">
             <SvgIcon iconId="icon-edit" width="20" height="20" />
         </div>
 
