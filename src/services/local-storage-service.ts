@@ -1,5 +1,5 @@
 export const LocalStorageService = {
-    getItem (key:string, fallback: any): any {
+    getItem<T>(key:string, fallback: any): T {
         try {
             const item = window.localStorage.getItem(key)
             return item ? window.JSON.parse(item) : fallback
@@ -7,13 +7,13 @@ export const LocalStorageService = {
             return fallback
         }
     },
-    setItem (key: string, value: any = {}): void {
+    setItem<T>(key: string, value: T): void {
         window.localStorage.setItem(key, window.JSON.stringify(value))
     },
-    removeItem (key: string): void {
+    removeItem(key: string): void {
         window.localStorage.removeItem(key)
     },
-    clearAllItems () {
+    clearAllItems(): void {
         window.localStorage.clear()
     }
 }

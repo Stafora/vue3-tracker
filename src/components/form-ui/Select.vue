@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TaskStatusDescriptions } from '@/types/TaskTypes'
+import { TaskStatusDescriptions } from '@/types/task-types'
 const model = defineModel({ required: true })
 
 const props = withDefaults(
