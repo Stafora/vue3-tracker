@@ -27,10 +27,9 @@ const handleOpenModal = (id: IDBValidKey): void => {
         id: id
     })
 }
-const handleRemoveTask = async (id: IDBValidKey): Promise<IDBValidKey> => {
-    const deletedId = await taskModel.delete(id)
+const handleRemoveTask = async (id: IDBValidKey): Promise<void> => {
+    await taskModel.delete(id)
     eventBus.emit('event-fetch-task')
-    return deletedId
 }
 const getTaskTextColor = computed(() => 
     props.task.status === TaskStatusEnum.COMPLITED ? 'text-gray-400' : 'text-white'

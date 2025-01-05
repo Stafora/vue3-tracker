@@ -1,46 +1,39 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
-import { openModal } from 'jenesius-vue-modal'
-import TaskCard from './TaskCard.vue'
-import ButtonCustom from '@/components/buttons/Button.vue'
-import ModalTask from '@/components/task/ModalTask.vue'
-import { ModalTaskEnum } from '@/types/task-types'
-import { TaskInterface, taskModel } from '@/models/task-model'
-import { eventBus } from '@/utils/event-bus'
+import { computed, onMounted, onUnmounted } from 'vue';
+import { openModal } from 'jenesius-vue-modal';
+import TaskCard from './TaskCard.vue';
+import ButtonCustom from '@/components/buttons/Button.vue';
+import ModalTask from '@/components/task/ModalTask.vue';
+import { ModalTaskEnum } from '@/types/task-types';
+import { useTaskList } from '@/composables/useTaskList';
+import Loader from '@/components/Loader.vue'
+import ErrorDisplay from '@/components/ErrorDisplay.vue'
 
-const tasks = ref<TaskInterface[]>([])
-const isLoading = ref(false);
-const error = ref<string | null>(null);
-
-const fetchTasks = async () => {
-    isLoading.value = true
-    try{
-        const result = await taskModel.getAll()
-        tasks.value = result
-    } catch (err) {
-        error.value = err instanceof Error ? err.message : 'Unknown error';
-    } finally {
-        isLoading.value = false
-    }
-}
+const { data, isLoading, error, fetchTasks, subscribeToFetchEvents, unsubscribeFromFetchEvents } = useTaskList();
 
 const handleOpenModal = async () => {
-    const modal = await openModal(ModalTask, {
+    const modal = await openModal(ModalTask, { 
         type: ModalTaskEnum.NEW
-    })
-    modal.onclose = () => {
-        fetchTasks()
-    }
-}
+    });
+    modal.onclose = onModalClose
+};
+
+const onModalClose = async () => {
+    await fetchTasks();
+    return true;
+};
 
 onMounted(() => {
-    eventBus.on('event-fetch-task', fetchTasks)
-    fetchTasks()
+    subscribeToFetchEvents();
+    fetchTasks();
 });
 
 onUnmounted(() => {
-    eventBus.off('event-fetch-task', fetchTasks)
+    unsubscribeFromFetchEvents();
 });
+
+const isTasksEmpty = computed(() => !isLoading.value && data.value.length === 0 && !error.value);
+const hasTasks = computed(() => !isLoading.value && data.value.length > 0 && !error.value);
 </script>
 
 <template>
@@ -49,21 +42,20 @@ onUnmounted(() => {
             <h3 class="text-white text-2xl font-medium">
                 Tasks
             </h3>
-
-            <ButtonCustom type="primary" @click="handleOpenModal">
-                Add
-            </ButtonCustom>
+            <ButtonCustom type="primary" @click="handleOpenModal">Add</ButtonCustom>
         </div>
 
-        <div v-if="tasks.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <TaskCard 
-                v-for="task in tasks"
-                :key="task.id"
-                :task="task"
-            />
-        </div>
-        <div v-else class="text-white">
+        <Loader v-if="isLoading" />
+        <ErrorDisplay v-else-if="error" :error="error" />
+        <div v-else-if="isTasksEmpty" class="text-white">
             Tasks empty, add new
+        </div>
+        <div v-else-if="hasTasks" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <TaskCard 
+                v-for="task in data" 
+                :key="task.id" 
+                :task="task" 
+            />
         </div>
     </div>
 </template>
