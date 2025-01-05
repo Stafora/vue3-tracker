@@ -1,9 +1,10 @@
-interface IndexDBHelperInterface {
-    getAll(): Promise<any[]>;
-    add(data: any): Promise<any>;
-    addMultipleData(data: any[]): Promise<any>;
-    update(data: any): Promise<void>;
-    delete(id: IDBValidKey): Promise<void>;
+export interface IndexDBHelperInterface {
+    getAll<T>(): Promise<T[]>;
+    getById<T>(id: IDBValidKey): Promise<T | null>
+    add<TInput, TOutput>(data: TInput): Promise<TOutput>;
+    addMultipleData<T>(data: T[]): Promise<void>;
+    update<TInput, TOutput>(data: TInput): Promise<TOutput>;
+    delete(id: IDBValidKey): Promise<IDBValidKey>;
 }
 
 type TablesType = {
@@ -12,13 +13,13 @@ type TablesType = {
 
 class IndexDBHelper implements IndexDBHelperInterface {
     private dbName: string;
-    private storeName: string;
+    private currentTable: string;
     private db: IDBDatabase | null = null;
     public tables: TablesType = {};
 
-    constructor(storeName: string) {
+    constructor(currentTable: string) {
         this.dbName = 'task-db';
-        this.storeName = storeName;
+        this.currentTable = currentTable;
 
         this.tables = {
             sortAtWork: 'tasks'
@@ -51,42 +52,81 @@ class IndexDBHelper implements IndexDBHelperInterface {
             };
 
             request.onerror = () => {
-                console.log(3)
                 reject(new Error('Failed to open database'));
             };
         });
     }
 
-    public async getAll(): Promise<any[]> {
+    public async getAll<T>(): Promise<T[]> {
         const db = await this.openDB();
-        const transaction = db.transaction(this.storeName, 'readonly');
-        const store = transaction.objectStore(this.storeName);
+        const transaction = db.transaction(this.currentTable, 'readonly');
+        const store = transaction.objectStore(this.currentTable);
         const request = store.getAll();
 
-        return new Promise<any[]>((resolve, reject) => {
-            request.onsuccess = () => resolve(request.result); // Возвращаем результат
+        return new Promise<T[]>((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(new Error('Failed to get all data'));
         });
     }
 
-    public async add(data: any): Promise<any> {
+    public async getById<T>(id: IDBValidKey): Promise<T | null> {
         const db = await this.openDB();
-        const transaction = db.transaction(this.storeName, 'readwrite');
-        const store = transaction.objectStore(this.storeName);
-        const request = store.add(data);
-
-        await new Promise<void>((resolve, reject) => {
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(new Error('Failed to delete data'));
+        const transaction = db.transaction(this.currentTable, 'readonly');
+        const store = transaction.objectStore(this.currentTable);
+        const request = store.get(id);
+    
+        return new Promise<T | null>((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result as T | null);
+            request.onerror = () => reject(new Error(`Failed to get record with id: ${id}`));
         });
     }
 
-    public async addMultipleData(data: any[]): Promise<void> {
+    public async add<TInput, TOutput>(data: TInput): Promise<TOutput> {
         const db = await this.openDB();
-        const transaction = db.transaction(this.storeName, 'readwrite');
-        const store = transaction.objectStore(this.storeName);
+        const transaction = db.transaction(this.currentTable, 'readwrite');
+        const store = transaction.objectStore(this.currentTable);
+    
+        const key = await new Promise<IDBValidKey>((resolve, reject) => {
+            const request = store.add(data);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(new Error('Failed to save data'));
+        });
+    
+        const result = await new Promise<TOutput>((resolve, reject) => {
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result as TOutput);
+            request.onerror = () => reject(new Error('Failed to fetch saved data'));
+        });
 
-        const addPromises = data.map((item) => {
+        return result;
+    }
+
+    public async update<TInput, TOutput>(data: TInput): Promise<TOutput> {
+        const db = await this.openDB();
+        const transaction = db.transaction(this.currentTable, 'readwrite');
+        const store = transaction.objectStore(this.currentTable);
+
+        const key = await new Promise<IDBValidKey>((resolve, reject) => {
+            const request = store.put(data);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(new Error('Failed to save data'));
+        });
+    
+        const result = await new Promise<TOutput>((resolve, reject) => {
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result as TOutput);
+            request.onerror = () => reject(new Error('Failed to fetch saved data'));
+        });
+
+        return result;
+    }
+
+    public async addMultipleData<T>(array: T[]): Promise<void> {
+        const db = await this.openDB();
+        const transaction = db.transaction(this.currentTable, 'readwrite');
+        const store = transaction.objectStore(this.currentTable);
+
+        const addPromises = array.map((item) => {
             return new Promise<void>((resolve, reject) => {
                 const request = store.add(item);
 
@@ -102,27 +142,14 @@ class IndexDBHelper implements IndexDBHelperInterface {
         }
     }
 
-    public async update(data: any): Promise<void> {
+    public async delete(id: IDBValidKey): Promise<IDBValidKey> {
         const db = await this.openDB();
-        const transaction = db.transaction(this.storeName, 'readwrite');
-        const store = transaction.objectStore(this.storeName);
-        const request = store.put(data);
-
-        await new Promise<void>((resolve, reject) => {
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(new Error('Failed to delete data'));
-        });
-    }
-
-    public async delete(id: IDBValidKey): Promise<void> {
-        const db = await this.openDB(); // Ожидание открытия базы данных
-        const transaction = db.transaction(this.storeName, 'readwrite');
-        const store = transaction.objectStore(this.storeName);
+        const transaction = db.transaction(this.currentTable, 'readwrite');
+        const store = transaction.objectStore(this.currentTable);
         const request = store.delete(id);
 
-        // Оборачиваем асинхронную операцию в Promise
-        await new Promise<void>((resolve, reject) => {
-            request.onsuccess = () => resolve();
+        return await new Promise<IDBValidKey>((resolve, reject) => {
+            request.onsuccess = () => resolve(id);
             request.onerror = () => reject(new Error('Failed to delete data'));
         });
     }
