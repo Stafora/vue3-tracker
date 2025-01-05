@@ -11,7 +11,7 @@ import SelectCustom from '@/components/form-ui/Select.vue'
 import DatePicker from '@/components/form-ui/DatePicker.vue';
 import ButtonCustom from '@/components/buttons/Button.vue'
 import { ModalTaskType, ModalTaskEnum } from '@/types/task-types';
-import { taskModel, TaskStatusEnum } from '@/models/task-model'
+import { CreateTaskInterface, taskModel, TaskStatusEnum, TaskStatusType, UpdateTaskInterface } from '@/models/task-model'
 import { eventBus } from '@/utils/event-bus'
 
 const props = defineProps<{
@@ -24,7 +24,7 @@ const schema = toTypedSchema(
         title: yup.string().min(6).required(),
         description: yup.string().min(10).required(),
         status: yup.string().required(),
-        dateExpired: yup.string().required()
+        dateExpired: yup.date().required()
     })
 )
 const { errors, defineField, validate } = useForm({
@@ -35,8 +35,8 @@ const { errors, defineField, validate } = useForm({
 });
 const [formTitle] = defineField('title');
 const [formDescription] = defineField('description');
-const [formStatus] = defineField('status');
-const [formDateExpired] = defineField('dateExpired');
+const [formStatus] = defineField<'status', TaskStatusType>('status');
+const [formDateExpired] = defineField<'dateExpired', Date>('dateExpired');
 
 const getButtonName = computed(() => {
     switch(props.type) {

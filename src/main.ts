@@ -1,13 +1,8 @@
 import '@/assets/styles/main.scss'
-
 import { createApp } from 'vue'
+import { registerPlugins } from './plugins'
 import App from './App.vue'
 
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
-
-const app = createApp(App);
-
-app.component('VueDatePicker', VueDatePicker);
-
+const app = createApp(App)
+registerPlugins(app)
 app.mount('#app')
