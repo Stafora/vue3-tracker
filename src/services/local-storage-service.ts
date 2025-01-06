@@ -1,5 +1,5 @@
 export const LocalStorageService = {
-    getItem<T>(key:string, fallback: any): T {
+    getItem<T>(key:string, fallback?: any): T {
         try {
             const item = window.localStorage.getItem(key)
             return item ? window.JSON.parse(item) : fallback

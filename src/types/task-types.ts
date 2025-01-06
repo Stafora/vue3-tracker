@@ -1,9 +1,9 @@
 import { TaskStatusEnum } from '@/models/task-model'
 
 export const TaskStatusDescriptions: Record<TaskStatusEnum, string> = {
-    [TaskStatusEnum.NEW]: 'Новый',
-    [TaskStatusEnum.IN_PROGRESS]: 'В процессе',
-    [TaskStatusEnum.COMPLITED]: 'Завершён',
+    [TaskStatusEnum.NEW]: 'New',
+    [TaskStatusEnum.IN_PROGRESS]: 'In progress',
+    [TaskStatusEnum.COMPLITED]: 'Complited',
 }
 
 export enum ModalTaskEnum {
