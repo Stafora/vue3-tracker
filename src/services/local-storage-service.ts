@@ -1,19 +1,39 @@
+export class LocalStorageError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'LocalStorageError';
+    }
+}
+
 export const LocalStorageService = {
-    getItem<T>(key:string, fallback?: any): T {
+    getItem<T>(key: string, fallback?: any): T | undefined {
         try {
-            const item = window.localStorage.getItem(key)
-            return item ? window.JSON.parse(item) : fallback
+            const item = window.localStorage.getItem(key);
+            return item ? JSON.parse(item) : fallback;
         } catch (err) {
-            return fallback
+            throw new LocalStorageError(`Failed to parse item for key "${key}": ${err instanceof Error ? err.message : String(err)}`);
         }
     },
     setItem<T>(key: string, value: T): void {
-        window.localStorage.setItem(key, window.JSON.stringify(value))
+        try {
+            const jsonString = JSON.stringify(value);
+            window.localStorage.setItem(key, jsonString);
+        } catch (err) {
+            throw new LocalStorageError(`Failed to set item for key "${key}": ${err instanceof Error ? err.message : String(err)}`);
+        }
     },
     removeItem(key: string): void {
-        window.localStorage.removeItem(key)
+        try {
+            window.localStorage.removeItem(key);
+        } catch (err) {
+            throw new LocalStorageError(`Failed to remove item for key "${key}": ${err instanceof Error ? err.message : String(err)}`);
+        }
     },
     clearAllItems(): void {
-        window.localStorage.clear()
+        try {
+            window.localStorage.clear();
+        } catch (err) {
+            throw new LocalStorageError(`Failed to clear all items in localStorage: ${err instanceof Error ? err.message : String(err)}`);
+        }
     }
-}
+};
