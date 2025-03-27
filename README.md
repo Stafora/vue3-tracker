@@ -1,5 +1,40 @@
-# Vue 3 + TypeScript + Vite
+# 📝 Task Tracker
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+📌 A simple task tracker powered by IndexedDB for offline data persistence.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## 🚀 Technologies
+
+- **Frontend:** Vue 3, Composition API, Tailwind CSS, TypeScript, Pinia, VeeValidate, Yup
+
+## 📦 Installation & Setup
+
+## 📋 Requirements
+- Node.js 22.12.0
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/Stafora/vue3-tracker.git
+cd vue3-tracker
+```
+
+### 2️⃣ Install dependencies
+```bash
+npm install
+```
+
+### 3️⃣ Start the project
+```bash
+npm run dev
+```
+
+## ✅ Features
+
+- ✅ Create, edit, and delete tasks
+- ✅ Built with Vue 3 and Composition API
+- ✅ Service implementation for **LocalStorage** and **IndexedDB**
+- ✅ Custom data model for IndexedDB
+- ✅ Offline persistence for task management
+
+---
+
+This project demonstrates a structured approach to managing tasks with IndexedDB, ensuring offline support and efficient data storage. 🚀
