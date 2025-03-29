@@ -1,7 +1,7 @@
 import IndexDBHelper, { IndexDBHelperInterface } from '@/services/index-db-service'
 
-export class BaseModel<TCreate, TUpdate, TReturn> {
-    private DB: IndexDBHelperInterface | null;
+export class BaseModel<TCreate, _TUpdate, TReturn> {
+    private DB: IndexDBHelperInterface;
 
     constructor(private readonly tableName: string) {
         this.DB = new IndexDBHelper(tableName);

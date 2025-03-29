@@ -6,7 +6,7 @@ export class LocalStorageError extends Error {
 }
 
 export const LocalStorageService = {
-    getItem<T>(key: string, fallback?: any): T | undefined {
+    getItem<T>(key: string, fallback?: T): T | undefined {
         try {
             const item = window.localStorage.getItem(key);
             return item ? JSON.parse(item) : fallback;
