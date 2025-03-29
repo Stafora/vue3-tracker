@@ -1,6 +1,6 @@
 import { computed, onMounted } from 'vue';
 import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/yup';
+import { toTypedSchema } from '@vee-validate/yup'; 
 import * as yup from 'yup';
 import { ModalTaskType, ModalTaskEnum } from '@/types/task-types';
 import { taskModel, TaskStatusEnum, TaskStatusType } from '@/models/task-model';
@@ -24,8 +24,8 @@ export function useModalTask(props: { type: ModalTaskType; id?: IDBValidKey }) {
         },
     });
 
-    const [formTitle] = defineField('title');
-    const [formDescription] = defineField('description');
+    const [formTitle] = defineField<'title'>('title');
+    const [formDescription] = defineField<'description'>('description');
     const [formStatus] = defineField<'status', TaskStatusType>('status');
     const [formDateExpired] = defineField<'dateExpired', Date>('dateExpired');
 
@@ -91,7 +91,7 @@ export function useModalTask(props: { type: ModalTaskType; id?: IDBValidKey }) {
             status: formStatus.value,
             expirationDate: formDateExpired.value,
         });
-        closeModal();
+        closeModal()
     };
 
     const closeModal = () => {
@@ -100,7 +100,9 @@ export function useModalTask(props: { type: ModalTaskType; id?: IDBValidKey }) {
     };
 
     onMounted(() => {
-        getTaskById(props.id);
+        if(props.id){
+            getTaskById(props.id)
+        }
     });
 
     return {

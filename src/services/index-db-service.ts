@@ -26,7 +26,7 @@ class IndexDBHelper implements IndexDBHelperInterface {
         }
     }
 
-    private openDB(): Promise<any> {
+    private openDB(): Promise<IDBDatabase> {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, 1);
 

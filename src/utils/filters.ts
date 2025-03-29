@@ -1,4 +1,4 @@
-export const dateFilter = (value): string => {
+export const dateFilter = (value: Date): string => {
     if (!value) return '';
     const date = new Date(value);
     return date.toLocaleDateString('EN', {

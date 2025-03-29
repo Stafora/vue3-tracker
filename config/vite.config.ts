@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
+import path from "path";
 
 export default defineConfig({
     plugins: [
@@ -8,19 +9,24 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('../src', import.meta.url)),
+            buffer: 'buffer',
+            process: 'process/browser',
         }
     },
     css: {
+        postcss: path.resolve(__dirname, "./postcss.config.js"),
         preprocessorOptions: {
           scss: {
-            // Указываем путь к файлу с глобальными переменными
             additionalData: `@use "@/assets/styles/_variables.scss" as *;`
           },
         },
     },
     server: {
-        // Дополнительные настройки сервера (например, если нужно указать порт)
         port: 3000
     }
 });
+
+function checker(arg0: { typescript: boolean; }): import("vite").PluginOption {
+    throw new Error('Function not implemented.');
+}

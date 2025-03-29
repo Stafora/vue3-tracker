@@ -4,25 +4,24 @@ import { onMounted, ref, watch } from 'vue'
 const props = defineProps<{
     value: string | number,
     label: string,
-    modelValue: {
-}
+    modelValue: (string | number)[]
 }>()
 
-const model = defineModel({ required: true })
+const model = defineModel<(string | number)[]>({ required: true })
 const isChecked = ref(false);
 
-const updateChecked = (arr) => {
-    if(Array.isArray(arr)){
-        isChecked.value = arr.includes(props.value) ? true : false
+const updateChecked = (arr: (string | number)[]) => {
+    if (Array.isArray(arr)) {
+        isChecked.value = arr.includes(props.value);
     }
 }
 
 onMounted(() => {
-    updateChecked(props.modelValue)
+    updateChecked(props.modelValue);
 })
 
 watch(() => props.modelValue, (newVal) => {
-    updateChecked(newVal)
+    updateChecked(newVal);
 });
 </script>
 

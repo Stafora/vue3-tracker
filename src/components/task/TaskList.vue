@@ -6,8 +6,8 @@ import ButtonCustom from '@/components/buttons/Button.vue';
 import ModalTask from '@/components/task/ModalTask.vue';
 import { ModalTaskEnum } from '@/types/task-types';
 import { useTaskList } from '@/composables/useTaskList';
-import Loader from '@/components/Loader.vue'
-import ErrorDisplay from '@/components/ErrorDisplay.vue'
+import Loader from '@/components/Loader.vue';
+import ErrorDisplay from '@/components/ErrorDisplay.vue';
 
 const { data, isLoading, error, fetchTasks, subscribeToFetchEvents, unsubscribeFromFetchEvents, filterStore } = useTaskList();
 
